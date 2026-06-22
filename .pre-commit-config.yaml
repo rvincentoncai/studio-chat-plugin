@@ -1,0 +1,39 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+default_language_version:
+  python: python3.14
+# Hook order is fail-fast, cheapest first: formatters (black, isort) →
+# pyrefly (type checker) → pylint (slow).
+repos:
+  # Using this mirror lets us use mypyc-compiled black, which is about 2x faster
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 25.11.0
+    hooks:
+      - id: black
+        exclude: ^sandbox/
+  - repo: https://github.com/PyCQA/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        exclude: ^sandbox/
+        types: [python]
+  - repo: local
+    hooks:
+      - id: pyrefly
+        name: pyrefly
+        entry: uv run pyrefly check
+        language: system
+        pass_filenames: false
+        exclude: ^sandbox/
+        types: [python]
+      - id: pylint
+        name: pylint
+        entry: uv run pylint
+        language: system
+        files: ^src/
+        types: [python]
+        args:
+          [
+            "-rn", # Only display messages
+            "-sn", # Don't display the score
+          ]
