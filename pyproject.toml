@@ -1,0 +1,83 @@
+[build-system]
+requires = ["uv_build>=0.11.0,<0.12.0"]
+build-backend = "uv_build"
+
+[project]
+name = "studio-chat-plugin"
+version = "0.1.0"
+description = "Offline chat plugin for OncAI Studio (research)."
+requires-python = "==3.14.4"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "black>=25.11.0,<25.12",
+    "coverage>=7.13.5,<7.14",
+    "isort>=7.0.0,<7.1",
+    "pre-commit>=3.3.2,<3.4",
+    "pylint>=4.0.5,<4.1",
+    "pyrefly>=1.0.0,<1.1",
+    "pytest-cov>=4.1.0,<4.2",
+    "pytest-mock>=3.10.0,<3.11",
+    "pytest-xdist>=3.3.1,<3.4",
+]
+
+[project.scripts]
+studio-chat-plugin = "studio_chat_plugin.cli:main"
+
+[tool.black]
+line-length = 79
+target-version = ['py314']
+required-version = '25'
+include = '\.pyi?$'
+extend-exclude = 'sandbox/|.venv/|tmp/'
+
+[tool.coverage.run]
+source = ["src/"]
+omit = ["*/tests/*"]
+
+[tool.isort]
+py_version = 314
+force_single_line = true
+single_line_exclusions = "typing"
+order_by_type = false
+force_sort_within_sections = true
+profile = "black"
+line_length = 79
+known_first_party = ["studio_chat_plugin"]
+skip_glob = ["sandbox/*", ".venv/*", "tmp/*"]
+
+[tool.pylint.basic]
+bad-names = ["foo", "baz", "toto", "tutu", "tata"]
+good-names = ["i", "j", "k", "x", "y", "z", "_"]
+
+[tool.pylint.main]
+# Multithreaded with automatically selected number of threads.
+jobs = 0
+ignore = ["sandbox", ".venv", "tmp"]
+
+[tool.pylint."messages control"]
+disable = [
+    "fixme",
+    "logging-fstring-interpolation",
+    "too-few-public-methods",
+    "too-many-positional-arguments",
+    "wrong-import-order",
+]
+
+[tool.pylint.similarities]
+min-similarity-lines = 18
+
+[tool.pytest.ini_options]
+addopts = [
+    "--verbose",
+    "-rs", # Show reason for skipping tests
+    "--import-mode=importlib", # importlib does not require __init__.py in test folders
+]
+norecursedirs = ["sandbox", ".venv", "tmp"]
+testpaths = ["src"]
+
+[tool.pyrefly]
+project-includes = ["src"]
+project-excludes = ["**/sandbox/**", "**/.venv/**", "**/tmp/**"]
+python-version = "3.14"
